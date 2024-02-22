@@ -1,0 +1,30 @@
+verify the tasks performed by the script as follows:
+
+1. **Check User Accounts**: You can check if the user accounts were created successfully by using the `id` command:
+    
+    $id client1
+    $id client2
+    
+    These commands should display the user and group information for `client1` and `client2` respectively.
+    
+2. **Check NGINX**: You can check if NGINX is running and enabled to start on boot with:
+    
+    $sudo systemctl status nginx
+    s$udo systemctl is-enabled nginx
+    
+    The first command should show `active (running)` if NGINX is running. The second command should return `enabled` if NGINX is set to start on boot.
+    
+3. **Check SSHD**: You can check if SSHD is running and enabled to start on boot with:
+    
+    $sudo systemctl status ssh
+    $sudo systemctl is-enabled ssh
+    
+    The first command should show `active (running)` if SSHD is running. The second command should return `enabled` if SSHD is set to start on boot.
+    
+4. **Check SFTP Configuration**: You can check the SFTP configuration in the `/etc/ssh/sshd_config` file. Look for the lines added by your script:
+    $grep -A1 "Match User" /etc/ssh/sshd_config
+
+    This command access the sftp configuration for the user client1 and client2:
+    $sftp client1@localhost
+    
+    This command should display the SFTP configuration for `client1` and `client2`.
