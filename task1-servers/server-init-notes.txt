@@ -28,3 +28,5 @@ verify the tasks performed by the script as follows:
     $sftp client1@localhost
     
     This command should display the SFTP configuration for `client1` and `client2`.
+
+    
