@@ -789,3 +789,129 @@ ForceCommand internal-sftp
 Match User client2
 ForceCommand internal-sftp
 Thu Feb 22 04:40:06 PM +03 2024 - User: vm-server - Success
+Thu Feb 22 11:56:42 PM +03 2024 - User: vm-server - Warning: User client1 already exists. Skipping.
+Thu Feb 22 11:56:42 PM +03 2024 - User: vm-server - Warning: User client2 already exists. Skipping.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://apt.pop-os.org/proprietary jammy InRelease
+Hit:2 http://apt.pop-os.org/release jammy InRelease
+Hit:3 http://apt.pop-os.org/ubuntu jammy InRelease
+Hit:4 http://apt.pop-os.org/ubuntu jammy-security InRelease
+Hit:5 http://apt.pop-os.org/ubuntu jammy-updates InRelease
+Hit:6 http://apt.pop-os.org/ubuntu jammy-backports InRelease
+Reading package lists...
+Building dependency tree...
+Reading state information...
+119 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Thu Feb 22 11:56:57 PM +03 2024 - User: vm-server - Success
+Thu Feb 22 11:56:57 PM +03 2024 - User: vm-server - Warning: NGINX is already installed. Skipping.
+Thu Feb 22 11:56:57 PM +03 2024 - User: vm-server - Success
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+Thu Feb 22 11:56:58 PM +03 2024 - User: vm-server - Success
+Thu Feb 22 11:56:58 PM +03 2024 - User: vm-server - NGINX is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:ea3a:de1c:713e:e528 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
+Thu Feb 22 11:56:58 PM +03 2024 - User: vm-server - Warning: SSHD is already installed. Skipping.
+Thu Feb 22 11:56:58 PM +03 2024 - User: vm-server - Success
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+Thu Feb 22 11:56:59 PM +03 2024 - User: vm-server - Success
+Thu Feb 22 11:56:59 PM +03 2024 - User: vm-server - SSHD is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:ea3a:de1c:713e:e528 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
+Fri Feb 23 12:04:58 AM +03 2024 - User: vm-server - Warning: User client1 already exists. Skipping.
+Fri Feb 23 12:04:58 AM +03 2024 - User: vm-server - Warning: User client2 already exists. Skipping.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://apt.pop-os.org/proprietary jammy InRelease
+Hit:2 http://apt.pop-os.org/release jammy InRelease
+Hit:3 http://apt.pop-os.org/ubuntu jammy InRelease
+Hit:4 http://apt.pop-os.org/ubuntu jammy-security InRelease
+Hit:5 http://apt.pop-os.org/ubuntu jammy-updates InRelease
+Hit:6 http://apt.pop-os.org/ubuntu jammy-backports InRelease
+Reading package lists...
+Building dependency tree...
+Reading state information...
+119 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Fri Feb 23 12:05:08 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:05:08 AM +03 2024 - User: vm-server - Warning: NGINX is already installed. Skipping.
+Fri Feb 23 12:05:08 AM +03 2024 - User: vm-server - Success
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+Fri Feb 23 12:05:09 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:05:09 AM +03 2024 - User: vm-server - NGINX is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:ea3a:de1c:713e:e528 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
+Fri Feb 23 12:05:09 AM +03 2024 - User: vm-server - Warning: SSHD is already installed. Skipping.
+Fri Feb 23 12:05:09 AM +03 2024 - User: vm-server - Success
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+Fri Feb 23 12:05:10 AM +03 2024 - User: vm-server - Success
+Subsystem sftp /usr/lib/openssh/sftp-server
+Match User client1
+    ChrootDirectory /home/client1
+    AllowTCPForwarding no
+    X11Forwarding no
+Fri Feb 23 12:05:11 AM +03 2024 - User: vm-server - Success
+Match User client2
+    ChrootDirectory /home/client2
+    AllowTCPForwarding no
+    X11Forwarding no
+Fri Feb 23 12:05:11 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:05:11 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:05:11 AM +03 2024 - User: vm-server - SSHD is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:ea3a:de1c:713e:e528 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
+Fri Feb 23 12:25:40 AM +03 2024 - User: vm-server - Warning: User client1 already exists. Skipping.
+Fri Feb 23 12:25:40 AM +03 2024 - User: vm-server - Warning: User client2 already exists. Skipping.
+
+WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+
+Hit:1 http://apt.pop-os.org/proprietary jammy InRelease
+Hit:2 http://apt.pop-os.org/release jammy InRelease
+Hit:3 http://apt.pop-os.org/ubuntu jammy InRelease
+Hit:4 http://apt.pop-os.org/ubuntu jammy-security InRelease
+Hit:5 http://apt.pop-os.org/ubuntu jammy-updates InRelease
+Hit:6 http://apt.pop-os.org/ubuntu jammy-backports InRelease
+Reading package lists...
+Building dependency tree...
+Reading state information...
+119 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Fri Feb 23 12:25:45 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:25:45 AM +03 2024 - User: vm-server - Warning: NGINX is already installed. Skipping.
+Fri Feb 23 12:25:45 AM +03 2024 - User: vm-server - Success
+Synchronizing state of nginx.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable nginx
+Fri Feb 23 12:25:46 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:25:46 AM +03 2024 - User: vm-server - NGINX is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:1e19:5523:e6ab:9ef6 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
+Fri Feb 23 12:25:46 AM +03 2024 - User: vm-server - Warning: SSHD is already installed. Skipping.
+Fri Feb 23 12:25:46 AM +03 2024 - User: vm-server - Success
+Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+Executing: /lib/systemd/systemd-sysv-install enable ssh
+Fri Feb 23 12:25:47 AM +03 2024 - User: vm-server - Success
+Subsystem sftp /usr/lib/openssh/sftp-server
+Match User client1
+    ChrootDirectory /home/client1
+    AllowTCPForwarding no
+    X11Forwarding no
+Fri Feb 23 12:25:47 AM +03 2024 - User: vm-server - Success
+Match User client2
+    ChrootDirectory /home/client2
+    AllowTCPForwarding no
+    X11Forwarding no
+Fri Feb 23 12:25:47 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:25:48 AM +03 2024 - User: vm-server - Success
+Fri Feb 23 12:25:48 AM +03 2024 - User: vm-server - SSHD is running
+Server Name: pop-os
+Server IPv4: 192.168.100.113
+Server IPv6: 2001:1a10:1141:1300:1e19:5523:e6ab:9ef6 2001:1a10:1141:1300:b16a:d866:a9c2:bf55
