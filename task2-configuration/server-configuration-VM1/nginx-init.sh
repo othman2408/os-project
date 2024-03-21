@@ -22,7 +22,7 @@ echo -e " ${LIGHTBLUE}
  -----------------------
 | Creating welcome page |
  ----------------------- ${NC}"
-index_file_path=$(ls $(dirname "$0")/index* | head -n 1)
+index_file_path=$(ls $(dirname "$0")/html/index* | head -n 1)
 if [ -f "$index_file_path" ]; then
   sudo cp "$index_file_path" /var/www/html/index.nginx-debian.html
   check_success
@@ -75,19 +75,19 @@ else
 fi
 
 
-# Nginx access log
-echo -e " ${LIGHTBLUE}
- ------------------
-| Nginx access log |
- ------------------ ${NC}"
-sudo tail /var/log/nginx/access.log | awk '{
-    split($4,a,"/");
-    split(a[3],b,":");
-    print "User \047"$3"\047 from IP "$1" made a request on "b[1]"/"a[2]"/"a[1]" at "b[2]":"b[3]":"b[4];
-    print "Request: "$6" "$7" "$8;
-    print "Response status: "$9;
-    print "Response size: "$10" bytes";
-    print "";
-}'
+# # Nginx access log
+# echo -e " ${LIGHTBLUE}
+#  ------------------
+# | Nginx access log |
+#  ------------------ ${NC}"
+# sudo tail /var/log/nginx/access.log | awk '{
+#     split($4,a,"/");
+#     split(a[3],b,":");
+#     print "User \047"$3"\047 from IP "$1" made a request on "b[1]"/"a[2]"/"a[1]" at "b[2]":"b[3]":"b[4];
+#     print "Request: "$6" "$7" "$8;
+#     print "Response status: "$9;
+#     print "Response size: "$10" bytes";
+#     print "";
+# }'
 
 # End of webserver-init.sh
