@@ -9,7 +9,7 @@ ORANGE='\033[0;33m'
 NC='\033[0m' # No Color
 
 # Function to display success or error message
-print_result() {
+check_success() {
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}Success${NC}"
   else
@@ -26,7 +26,7 @@ create_welcome_page() {
   index_file_path=$(ls $(dirname "$0")/html/index* | head -n 1)
   if [ -f "$index_file_path" ]; then
     sudo cp "$index_file_path" /var/www/html/index.nginx-debian.html
-    print_result
+    check_success
   else
     echo -e "${RED}Error: No file starting with 'index' found in the script directory${NC}"
   fi
@@ -62,7 +62,7 @@ user_auth() {
 			sudo sed -i 's|location / {|location / {n    auth_basic "Restricted";n    auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/default
 		fi
 		sudo nginx -t && sudo systemctl reload nginx
-		print_result
+		check_success
 	fi
 
 }
@@ -78,7 +78,7 @@ configure_logging() {
   fi
   sudo sed -i 's|access.log;|access.log myformat;|' /etc/nginx/sites-available/default
   sudo nginx -t && sudo systemctl reload nginx
-  print_result
+  check_success
 }
 
 # Function to display Nginx server status
