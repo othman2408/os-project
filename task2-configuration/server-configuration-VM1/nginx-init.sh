@@ -30,17 +30,17 @@ else
   echo -e "${RED}Error: No file starting with 'index' found in the script directory${NC}"
 fi
 
-# Implement user authentication
+# User Creation & authentication
 echo -e " ${LIGHTBLUE}
- ----------------------------------
-| Implementing user authentication |
- ---------------------------------- ${NC}"
+ --------------------------------
+| User Creation & authentication |
+ -------------------------------- ${NC}"
 echo -n "Enter username: "
 read username
 echo -n "Enter password: "
 read -s password
 echo
-password_hash=$(openssl passwd -apr1 $password)
+password_hash=$(openssl passwd -apr1 $password) 
 sudo sh -c "echo '$username:$password_hash' >> /etc/nginx/.htpasswd"
 if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
   sudo sed -i 's|location / {|location / {\n    auth_basic "Restricted";\n    auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/default
@@ -74,12 +74,19 @@ else
   echo -e "${RED}Nginx server is not active${NC}"
 fi
 
+# Nginx access log
+echo -e " ${LIGHTBLUE}
+ ------------------
+| Nginx access log |
+ ------------------ ${NC}"
+echo -e "Access log file: ${ORANGE}/var/log/nginx/access.log${NC}"
+echo -e "Do you want to display the last 10 lines of the access log? (y/n)"
+read -n 1 display_log
+echo
+if [ "$display_log" = "y" ]; then
+  sudo tail /var/log/nginx/access.log
+fi
 
-# # Nginx access log
-# echo -e " ${LIGHTBLUE}
-#  ------------------
-# | Nginx access log |
-#  ------------------ ${NC}"
 # sudo tail /var/log/nginx/access.log | awk '{
 #     split($4,a,"/");
 #     split(a[3],b,":");
