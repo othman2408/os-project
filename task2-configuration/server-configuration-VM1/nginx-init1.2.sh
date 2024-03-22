@@ -32,39 +32,23 @@ create_welcome_page() {
   fi
 }
 
-# Function for user creation and authentication
-user_auth() {
-	echo -e " ${LIGHTBLUE}
- --------------------------------
-| User Creation & authentication |
- -------------------------------- ${NC}"
-	echo -n "Do you want to create a new user for authentication? (y/n) "
-	read -n 1 create_user
-	echo
-
-	if [ "$create_user" = "y" ]; then
-		# Check if username already exists
-		while true; do
-			echo -n "Enter username: "
-			read username
-			if sudo grep -q "^$username:" /etc/nginx/.htpasswd; then
-				echo -e "${YELLOW}Warning: User '$username' already exists.${NC}"
-			else
-				break
-			fi
-		done
-		echo -n "Enter password: "
-		read -s password
-		echo
-		password_hash=$(openssl passwd -apr1 $password)
-		sudo sh -c "echo '$username:$password_hash' >> /etc/nginx/.htpasswd"
-		if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
-			sudo sed -i 's|location / {|location / {n    auth_basic "Restricted";n    auth_basic_user_file /etc/nginx/.htpasswd;|' /etc/nginx/sites-available/default
-		fi
-		sudo nginx -t && sudo systemctl reload nginx
-		check_success
-	fi
-}
+# # Function for user authentication
+# user_auth() {
+# 	echo -e " ${LIGHTBLUE}
+#  --------------------------------
+# | User Authentication Configuration |
+#  -------------------------------- ${NC}"
+# 	# Check if authentication configuration exists
+# 	if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
+# 		echo "Configuring NGINX for authentication..."
+# 		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic "Restricted";' /etc/nginx/sites-available/default
+# 		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/sites-available/default
+# 		sudo nginx -t && sudo systemctl reload nginx
+# 		check_success
+# 	else
+# 		echo -e "${YELLOW}Warning:${NC} NGINX authentication configuration already exists."
+# 	fi
+# }
 
 # Function to configure logging
 configure_logging() {
@@ -109,7 +93,9 @@ nginx_access_log() {
   read -n 1 display_log
   echo
   if [ "$display_log" = "y" ]; then
-    sudo tail /var/log/nginx/access.log
+    # show only important information ip, user, request, status,
+    sudo tail -n 10 /var/log/nginx/access.log | awk '{print $1, $3, $4, $5, $6, $7, $9}'
+    # sudo tail /var/log/nginx/access.log
   fi
 }
 
