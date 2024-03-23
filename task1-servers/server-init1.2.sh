@@ -230,7 +230,6 @@ configure_sshd_sftp() {
     if ! grep -q "^Match group sftp" /etc/ssh/sshd_config; then
         if printf "\n%s\n%s\n%s\n%s\n%s\n" \
             "Match group sftp" \
-            "    ChrootDirectory /home" \
             "    X11Forwarding no" \
             "    AllowTcpForwarding no" \
             "    ForceCommand internal-sftp" | sudo tee -a /etc/ssh/sshd_config >/dev/null; then
@@ -262,14 +261,14 @@ configure_sshd_sftp() {
         fi
     done
 
-    # Restrict Access to the User's Home Directory
-    echo -n "Restricting access to the user's home directory... "
-    if sudo chmod 777 /home/* >>"$LOGFILE" 2>&1; then
-        echo -e "${GREEN}Success${NC}"
-    else
-        echo -e "${RED}Error${NC}: Failed to restrict access to user's home directory."
-        exit 1
-    fi
+    # # Restrict Access to the User's Home Directory
+    # echo -n "Restricting access to the user's home directory... "
+    # if sudo chmod 777 /home/* >>"$LOGFILE" 2>&1; then
+    #     echo -e "${GREEN}Success${NC}"
+    # else
+    #     echo -e "${RED}Error${NC}: Failed to restrict access to user's home directory."
+    #     exit 1
+    # fi
 
     echo -e "${GREEN}All configurations completed successfully.${NC}"
 
