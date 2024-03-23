@@ -264,7 +264,7 @@ configure_sshd_sftp() {
 
     # Restrict Access to the User's Home Directory
     echo -n "Restricting access to the user's home directory... "
-    if sudo chmod 700 /home/* >>"$LOGFILE" 2>&1; then
+    if sudo chmod 777 /home/* >>"$LOGFILE" 2>&1; then
         echo -e "${GREEN}Success${NC}"
     else
         echo -e "${RED}Error${NC}: Failed to restrict access to user's home directory."
