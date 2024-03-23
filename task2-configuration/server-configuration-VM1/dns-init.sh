@@ -10,9 +10,11 @@ configure_quad9_dns() {
         exit 1
     fi
 
-    # Set DNS servers for IPv4 and IPv6
-    nmcli con mod "$connection_name" ipv4.dns "9.9.9.9,149.112.112.112"
-    nmcli con mod "$connection_name" ipv6.dns "2620:fe::fe,2620:fe::9"
+    # Set DNS servers for IPv4 and 
+    # ,149.112.112.112
+    # ,2620:fe::9
+    nmcli con mod "$connection_name" ipv4.dns "9.9.9.9"
+    nmcli con mod "$connection_name" ipv6.dns "2620:fe::fe"
 
     # Disable automatic DNS
     nmcli con mod "$connection_name" ipv4.ignore-auto-dns yes

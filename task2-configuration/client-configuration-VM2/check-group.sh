@@ -45,6 +45,5 @@ fi
 # Example: Display a message only accessible to authorized users
 echo "Welcome, authorized user!"
 
-# ... place your other script functionalities here ...
 
 
