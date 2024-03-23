@@ -43,7 +43,7 @@ fi
 # Place your main script functionalities here (assuming user is now authorized)
 
 # Example: Display a message only accessible to authorized users
-echo "Welcome, authorized user!"
+echo "Welcome, $(whoami)"
 
 
 
