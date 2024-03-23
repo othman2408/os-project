@@ -2,6 +2,7 @@
 
 # Receive server address
 read -p "Enter server address: " SERVER_ADDRESS
+read -p "Enter server name to make the connection: " SERVER_NAME
 
 # Define the maximum number of attempts
 MAX_ATTEMPTS=3
@@ -41,6 +42,8 @@ then
     
     # Attempt to copy ssh_attempts.log using rsync to the server
     echo "Copying ssh_attempts.log using rsync to the server..."
-    rsync ssh_attempts.log client@172.20.10.11:/home/client
+        rsync ssh_attempts.log "$SERVER_NAME@$SERVER_ADDRESS:$RSYNC_DESTINATION"
+        sleep 5s && gnome-session-quit --no-prompt
+
     exit 1
 fi
