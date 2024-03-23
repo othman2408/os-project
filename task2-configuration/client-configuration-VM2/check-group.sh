@@ -1,49 +1,41 @@
 #!/bin/bash
 
-# Group name for authorized users
-authorized_group="clients"
+# Define the group name
+group_name="clients"
 
-# Function to check group membership
-is_authorized_user() {
-  if groups | grep -q "$authorized_group"; then
-    return 0  # User is in the group
-  else
-    return 1  # User is not in the group
-  fi
+# Function to check if the user is part of the specified group
+is_user_in_group() {
+    groups "$USER" | grep -q "\b$group_name\b"
 }
 
-# Check if the authorized group exists
-if ! getent group "$authorized_group" >/dev/null 2>&1; then
-  echo "The '$authorized_group' group does not exist. Creating it with sudo..."
-  sudo groupadd "$authorized_group"
+# Check if the group exists, and if not, create it
+if ! getent group "$group_name" >/dev/null; then
+    echo "The group '$group_name' does not exist. Creating it..."
+    sudo groupadd "$group_name"
 fi
 
-# Check if the user is in the authorized group
-if ! is_authorized_user; then
-  # Not in the group, prompt for superuser privileges
-  echo "You are not a member of the '$authorized_group' group."
-  echo "This script requires superuser privileges to add you."
-  echo "Please enter the password for a user with sudo permissions (not root):"
+# Check if the user is already in the group
+if is_user_in_group; then
+    echo "You are already a member of the '$group_name' group. Proceeding with script execution."
+    # Add your script execution commands here
+else
+    # Prompt the user to obtain superuser privileges to add them to the group
+    echo "You are not a member of the '$group_name' group."
+    echo "This script requires superuser privileges to add you to the group."
 
-  # Read password securely using read -s
-  read -s -p "Password: " sudo_password
-  echo
-
-  # Verify sudo password using sudo -S (avoid storing password in script)
-  if ! sudo -S echo " " <<< "$sudo_password"; then
-    echo "Incorrect password. Exiting..."
-    exit 1
-  fi
-
-  # Add user to the authorized group with sudo
-  sudo usermod -a -G "$authorized_group" "$(whoami)"
-  echo "You have been added to the '$authorized_group' group. The script will now proceed."
+    # Prompt for sudo password and verify it
+    read -s -p "Please enter your password for sudo: " sudo_password
+    echo
+    if sudo -lS &>/dev/null <<< "$sudo_password"; then
+        # Add the user to the group
+        sudo usermod -aG "$group_name" "$USER"
+        echo "You have been added to the '$group_name' group. Proceeding with script execution."
+        # Add your script execution commands here
+    else
+        echo "Incorrect password or insufficient sudo permissions. Exiting."
+        exit 1
+    fi
 fi
 
-# Place your main script functionalities here (assuming user is now authorized)
-
-# Example: Display a message only accessible to authorized users
-echo "Welcome, $(whoami)"
-
-
+# Add your script execution commands here, if needed
 
