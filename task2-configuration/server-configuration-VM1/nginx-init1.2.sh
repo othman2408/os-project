@@ -33,22 +33,22 @@ create_welcome_page() {
 }
 
 # # Function for user authentication
-# user_auth() {
-# 	echo -e " ${LIGHTBLUE}
-#  --------------------------------
-# | User Authentication Configuration |
-#  -------------------------------- ${NC}"
-# 	# Check if authentication configuration exists
-# 	if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
-# 		echo "Configuring NGINX for authentication..."
-# 		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic "Restricted";' /etc/nginx/sites-available/default
-# 		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/sites-available/default
-# 		sudo nginx -t && sudo systemctl reload nginx
-# 		check_success
-# 	else
-# 		echo -e "${YELLOW}Warning:${NC} NGINX authentication configuration already exists."
-# 	fi
-# }
+enable_auth() {
+	echo -e " ${LIGHTBLUE}
+ --------------------------------
+| User Authentication Configuration |
+ -------------------------------- ${NC}"
+	# Check if authentication configuration exists
+	if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
+		echo "Configuring NGINX for authentication..."
+		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic "Restricted";' /etc/nginx/sites-available/default
+		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/sites-available/default
+		sudo nginx -t && sudo systemctl reload nginx
+		check_success
+	else
+		echo -e "${YELLOW}Warning:${NC} NGINX authentication configuration already exists."
+	fi
+}
 
 # Function to configure logging
 configure_logging() {
@@ -102,7 +102,7 @@ nginx_access_log() {
 # Main function
 main() {
   create_welcome_page
-  user_auth
+  enable_auth
   configure_logging
   nginx_status
   nginx_access_log

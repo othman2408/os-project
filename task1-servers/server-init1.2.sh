@@ -101,6 +101,14 @@ create_user_accounts() {
         # Create user with home directory and encrypted password
         sudo useradd -m -p "$PASSWORD" "$USER" >>"$LOGFILE" 2>&1
         # Add the created user to the Nginx password file (append without -c option)
+        # Check if the password file exists
+        if [ ! -f /etc/nginx/.htpasswd ]; then
+            # If the file does not exist, create it
+            htpasswd -c -b /etc/nginx/.htpasswd "$USER" "$PASSWORD"
+        else
+            # If the file exists, append the user
+            htpasswd -b /etc/nginx/.htpasswd "$USER" "$PASSWORD"
+        fi
         htpasswd -b /etc/nginx/.htpasswd "$USER" "$PASSWORD"
         sudo nginx -t && sudo systemctl reload nginx
         check_success
@@ -145,6 +153,12 @@ install_configure_nginx() {
     echo -n "Enabling NGINX to start on boot... "
     sudo systemctl enable nginx >>"$LOGFILE" 2>&1
     check_success
+
+    echo -n "Installing apache2-utils..."
+    echo
+    sudo apt-get install -y apache2-utils >>"$LOGFILE" 2>&1
+    check_success
+
 }
 
 # Function to display NGINX server information
@@ -243,9 +257,9 @@ sshd_server_information() {
 # Main function
 main() {
     enableIPv6
+    install_configure_nginx
     create_user_accounts
     update_package_lists
-    install_configure_nginx
     nginx_server_information
     install_configure_sshd
     configure_sshd_sftp
