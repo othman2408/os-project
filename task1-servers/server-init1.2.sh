@@ -85,8 +85,7 @@ create_user_accounts() {
         while true; do
             echo -n "Enter username for user $i: "
             read USER
-
-            if user_exists "$USER"; then
+            if id "$USER" &>/dev/null; then
                 echo -e "${YELLOW}Warning${NC}: User $USER already exists. Please enter a different username."
             else
                 break  # Break the loop when a valid username is provided
@@ -95,11 +94,14 @@ create_user_accounts() {
         
         USERS+=("$USER")  
         echo "Creating user $USER... "
-        echo "Enter password for $USER: "
+        # Create user with home directory
+        sudo useradd "$USER" >>"$LOGFILE" 2>&1
+        # Set password for the user
+        echo -n "Enter password for user $USER: "
         read -s PASSWORD
-        echo  # Move cursor to the next line
-        # Create user with home directory and encrypted password
-        sudo useradd -m -p "$PASSWORD" "$USER" >>"$LOGFILE" 2>&1
+        echo
+        echo "$USER:$PASSWORD" | sudo chpasswd
+
         # Add the created user to the Nginx password file (append without -c option)
         # Check if the password file exists
         if [ ! -f /etc/nginx/.htpasswd ]; then
@@ -109,7 +111,6 @@ create_user_accounts() {
             # If the file exists, append the user
             htpasswd -b /etc/nginx/.htpasswd "$USER" "$PASSWORD"
         fi
-        htpasswd -b /etc/nginx/.htpasswd "$USER" "$PASSWORD"
         sudo nginx -t && sudo systemctl reload nginx
         check_success
     done
@@ -210,22 +211,68 @@ configure_sshd_sftp() {
 | SSHD Configuration for SFTP |
  ----------------------------- ${NC}"
 
-    # Loop through each user
-    for USER in "${USERS[@]}"; do
-        echo "Configuring SSHD for SFTP for user ${USER}... "
+    # Check if the SFTP group exists
+    if grep -q "^sftp:" /etc/group; then
+        echo "SFTP group already exists."
+    else
+        echo -n "Creating the SFTP group... "
+        if sudo groupadd sftp >>"$LOGFILE" 2>&1; then
+            echo -e "${GREEN}Success${NC}"
+        else
+            echo -e "${RED}Error${NC}: Failed to create the SFTP group."
+            exit 1
+        fi
+    fi
+    
 
-        # Add SFTP configuration for the user
-        {
-            echo "Match User $USER"
-            echo "    AllowTCPForwarding yes"
-            echo "    X11Forwarding yes"
-        } | sudo tee -a /etc/ssh/sshd_config >>"$LOGFILE" 2>&1
-        
-        # Check success once after all configurations are added for each user
+    # Modifying the SSHD Configuration for the SFTP Group
+    echo -n "Modifying the SSHD configuration for the SFTP group... "
+    if ! grep -q "^Match group sftp" /etc/ssh/sshd_config; then
+        if printf "\n%s\n%s\n%s\n%s\n%s\n" \
+            "Match group sftp" \
+            "    ChrootDirectory /home" \
+            "    X11Forwarding no" \
+            "    AllowTcpForwarding no" \
+            "    ForceCommand internal-sftp" | sudo tee -a /etc/ssh/sshd_config >/dev/null; then
+            echo -e "${GREEN}Success${NC}"
+        else
+            echo -e "${RED}Error${NC}: Failed to modify SSHD configuration."
+            exit 1
+        fi
+    else
+        echo
+        echo -e "${YELLOW}SSHD configuration for SFTP group already exists.${NC}"
+    fi
+
+    # Restarting SSHD
+    restart_sshd
+
+    # Adding users to the SFTP group
+    for USER in "${USERS[@]}"; do
+        if id "$USER" &>/dev/null && groups "$USER" | grep -q "\<sftp\>"; then
+            echo "User $USER is already a member of the SFTP group."
+        else
+            echo -n "Adding user $USER to the SFTP group... "
+            if sudo usermod -aG sftp "$USER" >>"$LOGFILE" 2>&1; then
+                echo -e "${GREEN}Success${NC}"
+            else
+                echo -e "${RED}Error${NC}: Failed to add user $USER to the SFTP group."
+                exit 1
+            fi
+        fi
     done
 
-    # Check overall success after all configurations are added for all users
-    check_success
+    # Restrict Access to the User's Home Directory
+    echo -n "Restricting access to the user's home directory... "
+    if sudo chmod 700 /home/* >>"$LOGFILE" 2>&1; then
+        echo -e "${GREEN}Success${NC}"
+    else
+        echo -e "${RED}Error${NC}: Failed to restrict access to user's home directory."
+        exit 1
+    fi
+
+    echo -e "${GREEN}All configurations completed successfully.${NC}"
+
 }
 
 
