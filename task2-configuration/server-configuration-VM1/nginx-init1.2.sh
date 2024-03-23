@@ -99,6 +99,18 @@ nginx_access_log() {
   fi
 }
 
+# Function to start unsuccessful attempts script
+start_unsuccessful_attempts() {
+  echo -e " ${LIGHTBLUE}
+-----------------------------------------
+| Starting Unsuccessful Attempts Tracker |
+----------------------------------------- ${NC}"
+
+  # Run the unsuccessful-attempts.sh script in the background
+  ./unsuccessful-attempts.sh &
+  check_success
+}
+
 # Main function
 main() {
   create_welcome_page
@@ -106,6 +118,7 @@ main() {
   configure_logging
   nginx_status
   nginx_access_log
+  start_unsuccessful_attempts
 }
 
 # Execute main function
