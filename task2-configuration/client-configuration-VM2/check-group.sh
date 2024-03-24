@@ -2,7 +2,7 @@
 
 # Define the group name
 group_name="clients"
-
+USER=$1
 # Function to check if the user is part of the specified group
 is_user_in_group() {
     groups "$USER" | grep -q "\b$group_name\b"

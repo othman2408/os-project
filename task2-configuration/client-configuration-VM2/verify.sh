@@ -40,7 +40,7 @@ addUserToGroup() {
     fi
     echo -e "Running ${LIGHTBLUE}./main.sh${NC} under ${LIGHTBLUE}$user${NC}"
     echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
-    sudo -u "$user" ./main.sh
+    sudo -u "$1" ./main.sh
 }
 
 main() {
@@ -66,7 +66,7 @@ main() {
     echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
     # Give execute permission to main.sh
     chmod +x main.sh
-    ./main.sh
+    ./main.sh $user
     sleep 1
     createGroup
     addGroupToSudoers
