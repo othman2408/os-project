@@ -37,5 +37,5 @@ else
     fi
 fi
 
-./handle-attempts.sh
+./invalid-attempts.sh
 

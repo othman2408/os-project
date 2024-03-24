@@ -8,8 +8,5 @@ echo "--------------------------------------------------------------------------
 echo -e "${LIGHTBLUE}STEP 1: Check User Group Membership${NC}"
 ./check-group.sh
 echo "--------------------------------------------------------------------------------"
-echo -e "${LIGHTBLUE}STEP 2: Log Invalid Attempts${NC}"
-./handle-attempts.sh
-echo "--------------------------------------------------------------------------------"
-echo -e "${LIGHTBLUE}STEP 3: Handle Excessive Invalid Attempts${NC}"
+echo -e "${LIGHTBLUE}STEP 2 & 3: Log Invalid Attempts and send a file to server via rsync${NC}"
 ./invalid-attempts.sh
