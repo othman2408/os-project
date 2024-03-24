@@ -37,5 +37,5 @@ else
     fi
 fi
 
-# Add your script execution commands here, if needed
+./handle-attempts.sh
 

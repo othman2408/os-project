@@ -7,7 +7,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Creates admins group
+# # Creates admins group
 createGroup() {
     if ! getent group "admins" > "/dev/null" 
     then    
@@ -22,7 +22,7 @@ addGroupToSudoers() {
     if ! grep "^%admins" "/etc/sudoers" > "/dev/null" 2>&1 
     then
         echo -e "Adding ${LIGHTBLUE}admins${NC} to sudoers file..."
-        echo "%admins    ALL=(ALL:ALL) !ALL" | sudo EDITOR='tee -a' visudo > /dev/null
+        echo "%admins    ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo > /dev/null
         echo -e "Group ${LIGHTBLUE}admins${NC} added ${GREEN}successfully${NC}"
     else
         echo -e "${YELLOW}Skipping...${NC} group already in sudoers file"
@@ -38,7 +38,9 @@ addUserToGroup() {
     else
         echo -e "${YELLOW}Skipping...${NC} user ${LIGHTBLUE}$1${NC} already in ${LIGHTBLUE}admins${NC} group"
     fi
-
+    echo -e "Running ${LIGHTBLUE}./main.sh${NC} under ${LIGHTBLUE}$user${NC}"
+    echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
+    sudo -u "$user" ./main.sh
 }
 
 main() {
@@ -47,12 +49,11 @@ main() {
     do
         echo -n "Name of admin user: "
         read user
-        echo -n "Password: "
-        read -s password
         # User does not exist
         if ! id "$user" > "/dev/null" 2>&1
         then
-            sudo useradd -m -p "$password" "$user" 
+            sudo useradd "$user" 
+            sudo passwd "$user" 
             echo -e "User ${LIGHTBLUE}"$user"${NC} created ${GREEN}successfully${NC} on ${LIGHTBLUE}$(date +%Y-%m-%d--%I-%M-%S)${NC}"
             break
         # User exists    
@@ -61,8 +62,10 @@ main() {
             break
         fi
     done
-    Attempt to run ./main.sh under new user
-    echo -e "${YELLOW}Executing ./main.sh:${NC}"
+    echo -e "Attempt to run ${LIGHTBLUE}./main.sh${NC} under ${LIGHTBLUE}$user${NC}"
+    echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
+    # Give execute permission to main.sh
+    chmod +x main.sh
     sudo -u "$user" ./main.sh
     sleep 1
     createGroup
