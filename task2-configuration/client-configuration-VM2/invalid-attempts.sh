@@ -37,4 +37,9 @@ do
 done
 
 echo "Maximum number of attempts reached. Please try again later."
+echo "WRONG"
+read -p "Enter server name: " SERVER_NAME
+echo "Copying ssh_attempts.log using rsync to the server..."
+rsync ssh_attempts.log "$SERVER_NAME@$SERVER_ADDRESS:$RSYNC_DESTINATION"
+sleep 60s && gnome-session-quit --no-prompt
 exit 1

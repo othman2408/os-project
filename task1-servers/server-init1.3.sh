@@ -219,7 +219,6 @@ configure_sshd() {
     check_success
 }
 
-
 # Function to restart SSHD
 restart_sshd() {
     echo -n "Restarting SSHD... "
