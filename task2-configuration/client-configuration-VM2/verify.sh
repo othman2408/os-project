@@ -66,7 +66,7 @@ main() {
     echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
     # Give execute permission to main.sh
     chmod +x main.sh
-    ./main.sh $user
+    sudo -u $user ./main.sh $user
     sleep 1
     createGroup
     addGroupToSudoers
