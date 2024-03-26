@@ -180,8 +180,44 @@ nginx_server_information() {
     fi
 }
 
+# Function to install and configure SSHD
+install_configure_sshd() {
+    echo -e " ${LIGHTBLUE}
+ ----------------------------------
+| SSHD Installation and Configuration |
+ ---------------------------------- ${NC}"
+    if ! dpkg -s openssh-server >/dev/null 2>&1; then
+        echo -n "Installing SSHD... "
+        sudo apt install -y openssh-server >>"$LOGFILE" 2>&1
+        check_success
+    else
+        echo -e "${YELLOW}Warning${NC}: SSHD is already installed. Skipping."
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already installed. Skipping." >>"$LOGFILE"
+    fi
+
+    # Enable SSHD if not already enabled
+    if ! systemctl is-enabled --quiet ssh; then
+        echo -n "Enabling SSHD to start on boot... "
+        sudo systemctl enable ssh >>"$LOGFILE" 2>&1
+        check_success
+    else
+        echo -e "${YELLOW}Warning${NC}: SSHD is already enabled. Skipping."
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already enabled. Skipping." >>"$LOGFILE"
+    fi
+
+    # Start SSHD if not already started
+    if ! systemctl is-active --quiet ssh; then
+        echo -n "Starting SSHD... "
+        sudo systemctl start ssh >>"$LOGFILE" 2>&1
+        check_success
+    else
+        echo -e "${YELLOW}Warning${NC}: SSHD is already running. Skipping start."
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already running. Skipping start." >>"$LOGFILE"
+    fi
+}
+
 # Function to configure SSHD for SFTP and SSH access
-configure_sshd() {
+configure_sshd_sftp() {
     echo -e " ${LIGHTBLUE}
  ------------------------------
 | SSHD Configuration for SFTP |
@@ -248,6 +284,7 @@ sshd_server_information() {
 main() {
     enableIPv6
     install_configure_nginx
+    install_configure_sshd
     create_user_accounts
     update_package_lists
     nginx_server_information
