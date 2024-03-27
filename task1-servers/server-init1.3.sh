@@ -134,7 +134,6 @@ install_configure_nginx() {
     check_success
 
     echo -n "Installing apache2-utils..."
-    echo
     sudo apt-get install -y apache2-utils >>"$LOGFILE" 2>&1
     check_success
 
@@ -159,9 +158,9 @@ nginx_server_information() {
 # Function to install and configure SSHD
 install_configure_sshd() {
     echo -e " ${LIGHTBLUE}
- ----------------------------------
+ -------------------------------------
 | SSHD Installation and Configuration |
- ---------------------------------- ${NC}"
+ ------------------------------------- ${NC}"
     if ! dpkg -s openssh-server >/dev/null 2>&1; then
         echo -n "Installing SSHD... "
         sudo apt install -y openssh-server >>"$LOGFILE" 2>&1
@@ -187,8 +186,8 @@ install_configure_sshd() {
         sudo systemctl start ssh >>"$LOGFILE" 2>&1
         check_success
     else
-        echo -e "${YELLOW}Warning${NC}: SSHD is already running. Skipping start."
-        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already running. Skipping start." >>"$LOGFILE"
+        echo -e "${YELLOW}Warning${NC}: SSHD is already running."
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already running." >>"$LOGFILE"
     fi
 }
 

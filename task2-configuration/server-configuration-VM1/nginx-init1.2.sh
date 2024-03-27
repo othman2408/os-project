@@ -32,22 +32,32 @@ create_welcome_page() {
   fi
 }
 
-# # Function for user authentication
+# Function for user authentication
 enable_auth() {
 	echo -e " ${LIGHTBLUE}
- --------------------------------
+ -----------------------------------
 | User Authentication Configuration |
- -------------------------------- ${NC}"
-	# Check if authentication configuration exists
-	if ! sudo grep -q 'auth_basic "Restricted";' /etc/nginx/sites-available/default; then
-		echo "Configuring NGINX for authentication..."
-		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic "Restricted";' /etc/nginx/sites-available/default
-		sudo sed -i '/location \/ {/a \ \ \ \ auth_basic_user_file /etc/nginx/.htpasswd;' /etc/nginx/sites-available/default
-		sudo nginx -t && sudo systemctl reload nginx
-		check_success
-	else
-		echo -e "${YELLOW}Warning:${NC} NGINX authentication configuration already exists."
-	fi
+ ----------------------------------- ${NC}"
+  # Check if location block exists
+  if sudo grep -q 'location / {' /etc/nginx/sites-available/default; then
+      # Append authentication configuration within location block
+      {
+          echo '            auth_basic "Restricted";'
+          echo '            auth_basic_user_file /etc/nginx/.htpasswd;'
+      } | sudo tee -a /etc/nginx/sites-available/default >/dev/null
+  else
+      # Create new location block with authentication configuration
+      {
+          echo '    location / {'
+          echo '        try_files $uri $uri/ =404;'
+          echo '        auth_basic "Restricted";'
+          echo '        auth_basic_user_file /etc/nginx/.htpasswd;'
+          echo '    }'
+      } | sudo tee -a /etc/nginx/sites-available/default >/dev/null
+  fi
+  # Test and reload NGINX
+  sudo nginx -t && sudo systemctl reload nginx
+  check_success
 }
 
 # Function to configure logging
@@ -102,9 +112,9 @@ nginx_access_log() {
 # Function to start unsuccessful attempts script
 start_unsuccessful_attempts() {
   echo -e " ${LIGHTBLUE}
------------------------------------------
+ ----------------------------------------
 | Starting Unsuccessful Attempts Tracker |
------------------------------------------ ${NC}"
+ ---------------------------------------- ${NC}"
 
   # Run the unsuccessful-attempts.sh script in the background
   ./unsuccessful-attempts.sh &
