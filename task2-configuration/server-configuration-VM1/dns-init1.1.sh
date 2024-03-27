@@ -8,6 +8,7 @@ ORANGE='\033[0;33m'
 NC='\033[0m' # No Color
 
 
+dns_server="9.9.9.9"
 # Function to configure Quad9 DNS
 configure_quad9_dns() {
     # Find active connection name
@@ -18,13 +19,11 @@ configure_quad9_dns() {
         exit 1
     fi
 
-    # Set DNS servers for IPv4 and IPv6
-    nmcli con mod "$connection_name" ipv4.dns "9.9.9.9"
-    nmcli con mod "$connection_name" ipv6.dns "2620:fe::fe"
+    # Set DNS servers for IPv4
+    nmcli con mod "$connection_name" ipv4.dns "$dns_server"
 
-    # Disable automatic DNS
+    # Disable automatic DNS for IPv4
     nmcli con mod "$connection_name" ipv4.ignore-auto-dns yes
-    nmcli con mod "$connection_name" ipv6.ignore-auto-dns yes
 
     # Apply changes
     nmcli con up "$connection_name"
@@ -39,9 +38,6 @@ configure_quad9_dns() {
 
 # Function to change DNS in /etc/resolv.conf
 change_resolv_conf() {
-    # Define your DNS server
-    dns_server="9.9.9.9"
-
     # Check if the DNS server is already set in /etc/resolv.conf
     if grep -qFx "nameserver $dns_server" /etc/resolv.conf; then
         echo -e "${YELLOW}DNS server $dns_server is already set in /etc/resolv.conf.${NC}"
@@ -65,21 +61,15 @@ change_resolv_conf() {
 # Main script
 echo "Configuring Quad9 DNS..."
 
-# Check if NetworkManager is installed
-if ! command -v nmcli &> /dev/null; then
-    echo -e "${RED}Error: NetworkManager (nmcli) is not installed. Please install it to continue.${NC}"
-    exit 1
-fi
-
 # Run configuration function
 configure_quad9_dns
 
 # Change DNS in /etc/resolv.conf
 change_resolv_conf
 
-echo -e "You can use the ${GREEN}'nmcli dev show | grep DNS'${NC} command to verify the DNS settings."
+echo -e "You can use the command ${GREEN}'nmcli dev show | grep DNS'${NC} command to verify the DNS settings."
 echo -e "Please visit ${GREEN}https://on.quad9.net${NC} to check if Quad9 DNS is set up and working correctly."
-echo -e "You can use ${GREEN}'sudo apt install dnsutils -y'${NC} followed by ${GREEN}'dig google.com'${NC} to test the DNS resolution."
+echo -e "You can use the commands ${GREEN}'sudo apt install dnsutils -y'${NC} followed by ${GREEN}'dig google.com'${NC} to test the DNS resolution."
 
 
 # End of script
