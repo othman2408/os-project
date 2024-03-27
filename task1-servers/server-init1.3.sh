@@ -39,18 +39,6 @@ check_success() {
     fi
 }
 
-# Enable IPv6 if not already enabled
-enableIPv6() {
-  if ! grep -q "net.ipv6.conf.all.disable_ipv6 = 0" /etc/sysctl.conf; then
-    echo -n "Enabling IPv6... "
-    echo "net.ipv6.conf.all.disable_ipv6 = 0" | sudo tee -a /etc/sysctl.conf >>"$LOGFILE" 2>&1
-    sudo sysctl -p >>"$LOGFILE" 2>&1
-    echo -e "${GREEN}Success${NC}"
-  else
-    echo -e "${YELLOW}Warning${NC}: IPv6 is already enabled. Skipping."
-  fi
-}
-
 # Function to check if a user exists
 user_exists() {
     if id "$1" >/dev/null 2>&1; then
@@ -143,8 +131,8 @@ install_configure_nginx() {
         sudo apt install -y nginx >>"$LOGFILE" 2>&1
         check_success
     else
-        echo -e "${YELLOW}Warning${NC}: NGINX is already installed. Skipping."
-        echo -e "$(date) - User: $(whoami) - Warning: NGINX is already installed. Skipping." >>"$LOGFILE"
+        echo -e "${YELLOW}Warning${NC}: NGINX is already installed. "
+        echo -e "$(date) - User: $(whoami) - Warning: NGINX is already installed. " >>"$LOGFILE"
     fi
 
     echo -n "Starting NGINX... "
@@ -170,13 +158,11 @@ nginx_server_information() {
  -------------------------- ${NC}"
     if systemctl is-active --quiet nginx; then
         echo -e "${GREEN}NGINX is running${NC}"
-        echo "Server Name: $(hostname)"
+        echo "Server Name: $(logname)"
         echo "Server IPv4: $(hostname -I | awk '{print $1}')"
-        echo "Server IPv6: $(hostname -I | awk '{print $2, $3}')"
         echo -e "$(date) - User: $(whoami) - NGINX is running" >>"$LOGFILE"
         echo "Server Name: $(hostname)" >>"$LOGFILE"
         echo "Server IPv4: $(hostname -I | awk '{print $1}')" >>"$LOGFILE"
-        echo "Server IPv6: $(hostname -I | awk '{print $2, $3}')" >>"$LOGFILE"
     fi
 }
 
@@ -191,8 +177,8 @@ install_configure_sshd() {
         sudo apt install -y openssh-server >>"$LOGFILE" 2>&1
         check_success
     else
-        echo -e "${YELLOW}Warning${NC}: SSHD is already installed. Skipping."
-        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already installed. Skipping." >>"$LOGFILE"
+        echo -e "${YELLOW}Warning${NC}: SSHD is already installed. "
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already installed. " >>"$LOGFILE"
     fi
 
     # Enable SSHD if not already enabled
@@ -201,8 +187,8 @@ install_configure_sshd() {
         sudo systemctl enable ssh >>"$LOGFILE" 2>&1
         check_success
     else
-        echo -e "${YELLOW}Warning${NC}: SSHD is already enabled. Skipping."
-        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already enabled. Skipping." >>"$LOGFILE"
+        echo -e "${YELLOW}Warning${NC}: SSHD is already enabled. "
+        echo -e "$(date) - User: $(whoami) - Warning: SSHD is already enabled. " >>"$LOGFILE"
     fi
 
     # Start SSHD if not already started
@@ -227,15 +213,6 @@ configure_sshd_sftp() {
     # Loop through each user
     for USER in "${USERS[@]}"; do
         echo "Configuring SSHD for SFTP and SSH for user ${USER}... "
-
-        # Add SFTP configuration for the user
-        {
-            echo "Match User $USER"
-            echo "    ChrootDirectory /home/$USER"
-            echo "    AllowTCPForwarding no"
-            echo "    X11Forwarding no"
-            echo "    ForceCommand internal-sftp"
-        } | sudo tee -a /etc/ssh/sshd_config >>"$LOGFILE" 2>&1
 
         # Add SSH configuration for the user
         {
@@ -270,19 +247,16 @@ sshd_server_information() {
  ------------------------- ${NC}"
     if systemctl is-active --quiet ssh; then
         echo -e "${GREEN}SSHD is running${NC}"
-        echo "Server Name: $(hostname)"
+        echo "Server Name: $(logname)"
         echo "Server IPv4: $(hostname -I | awk '{print $1}')"
-        echo "Server IPv6: $(hostname -I | awk '{print $2, $3}')"
         echo -e "$(date) - User: $(whoami) - SSHD is running" >>"$LOGFILE"
         echo "Server Name: $(hostname)" >>"$LOGFILE"
         echo "Server IPv4: $(hostname -I | awk '{print $1}')" >>"$LOGFILE"
-        echo "Server IPv6: $(hostname -I | awk '{print $2, $3}')" >>"$LOGFILE"
     fi
 }
 
 # Main function
 main() {
-    enableIPv6
     install_configure_nginx
     install_configure_sshd
     create_user_accounts
