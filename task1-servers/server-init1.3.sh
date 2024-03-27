@@ -202,6 +202,7 @@ install_configure_sshd() {
     fi
 }
 
+
 # Function to configure SSHD for SFTP and SSH access
 configure_sshd_sftp() {
     echo -e " ${LIGHTBLUE}
@@ -210,27 +211,58 @@ configure_sshd_sftp() {
 |      and SSH Access         |
  ------------------------------ ${NC}"
 
-    # Loop through each user
-    for USER in "${USERS[@]}"; do
-        echo "Configuring SSHD for SFTP and SSH for user ${USER}... "
+    # Check if the group sftp_users already exists
+    if ! getent group sftp_users >/dev/null; then
+        # If the group doesn't exist, create it
+        sudo groupadd sftp_users
+    fi
 
-        # Add SSH configuration for the user
+    # Add users to the sftp_users group
+    sudo usermod -aG sftp_users "${USERS[@]}"
+
+    # Check if the SSH configuration block for sftp_users already exists in sshd_config
+    if ! grep -q "Match Group sftp_users" /etc/ssh/sshd_config; then
+        # Add SSH configuration for the sftp_users group
         {
-            echo "Match User $USER"
+            echo "Match Group sftp_users"
             echo "    AllowTCPForwarding yes"
             echo "    X11Forwarding yes"
             echo "    ForceCommand none"
         } | sudo tee -a /etc/ssh/sshd_config >>"$LOGFILE" 2>&1
+    else
+        echo -e "${YELLOW}Warning${NC}: SSH configuration for sftp_users group already exists."
+    fi
 
-        # Check success once after all configurations are added for each user
-    done
+    # Check if the group ssh_users already exists
+    if ! getent group ssh_users >/dev/null; then
+        # If the group doesn't exist, create it
+        sudo groupadd ssh_users
+    fi
+
+    # Add users to the ssh_users group
+    sudo usermod -aG ssh_users "${USERS[@]}"
+
+    # Check if the SSH configuration block for ssh_users already exists in sshd_config
+    if ! grep -q "Match Group ssh_users" /etc/ssh/sshd_config; then
+        # Add SSH configuration for the ssh_users group
+        {
+            echo "Match Group ssh_users"
+            echo "    AllowTCPForwarding yes"
+            echo "    X11Forwarding yes"
+            echo "    ForceCommand none"
+        } | sudo tee -a /etc/ssh/sshd_config >>"$LOGFILE" 2>&1
+    else
+        echo -e "${YELLOW}Warning${NC}: SSH configuration for ssh_users group already exists."
+    fi
 
     # Restart SSHD
     restart_sshd
 
-    # Check overall success after all configurations are added for all users
+    # Check overall success
     check_success
 }
+
+
 
 # Function to restart SSHD
 restart_sshd() {
