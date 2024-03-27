@@ -1,30 +1,36 @@
 #!/bin/bash
 
-echo -e " ${LIGHTBLUE}
----------------------------------------
-| Unsuccessful Attempts Script Tracker |
---------------------------------------- ${NC}"
+# SSH log file
+SSH_LOG="/var/log/auth.log"
 
-# NGINX access log
-ACCESS_LOG="/var/log/nginx/access.log"
-
-# File to write 'GET 401' lines to
+# unsuccessful attempts
 ERROR_LOG="unsuccessful_attempts.log"
 
-# Continuously read from the access log, filter for status code 401, and write to error log
-tail -f "$ACCESS_LOG" | grep --line-buffered ' 401 ' > "$ERROR_LOG" &
+# monitor SSH logs for unsuccessful attempts
+monitor_ssh_logs() {
+    # Keep read from SSH log and filter for unsuccessful attempts and redirected to the log file
+    tail -n0 -F "$SSH_LOG" | grep --line-buffered 'authentication failure' > "$ERROR_LOG" &
 
-# Get the PID of the background process
-PID=$!
+    # PID of the background process
+    PID=$!
 
-# Run indefinitely
-while true; do
-    # Delete the error log if it's more than one week old
-    find "$(dirname "$ERROR_LOG")" -name "$(basename "$ERROR_LOG")" -mtime +7 -exec rm {} +
+    # keep running
+    while true; do
+        # delete the error log if it's more than one week
+        find "$(dirname "$ERROR_LOG")" -name "$(basename "$ERROR_LOG")" -mtime +7 -exec rm {} +
 
-    # Sleep for 1 day before running again
-    sleep 86400
-done
+        # Sleep for 1 day before run again
+        sleep 86400
+    done
 
-# Kill the background process when the script exits
-trap "kill $PID" EXIT
+    # Kill the background process when the script exits
+    trap "kill $PID" EXIT
+}
+
+# Main function
+main() {
+    monitor_ssh_logs
+}
+
+
+main

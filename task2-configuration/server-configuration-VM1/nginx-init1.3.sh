@@ -72,7 +72,7 @@ configure_logging() {
         return 1
     fi
 
-    echo -e "${YELLOW}Warning:${NC} Access requests are being recorded in: $RECORD_LOG"
+    echo -e "${YELLOW}Warning: Access requests are being recorded in: $RECORD_LOG${NC}"
     # Continuously append content of NGINX_ACCESS_LOG to RECORD_LOG
     tail -n0 -F "$NGINX_ACCESS_LOG" >> "$RECORD_LOG" &
 }
@@ -102,14 +102,23 @@ nginx_status() {
 # Function to start unsuccessful attempts script
 start_unsuccessful_attempts() {
   echo -e " ${LIGHTBLUE}
- ----------------------------------------
-| Starting Unsuccessful Attempts Tracker |
- ---------------------------------------- ${NC}"
+ -------------------------------
+| Unsuccessful Attempts Tracker |
+ ------------------------------- ${NC}"
 
-  # Run the unsuccessful-attempts.sh script in the background
-  ./unsuccessful-attempts.sh &
-  check_success
+  # unsuccessful-attempts.sh script location
+  SCRIPT_PATH="$(dirname "$0")/unsuccessful-attempts.sh"
+
+  # Check if the script exists
+  if [ -x "$SCRIPT_PATH" ]; then
+    # Run in the background
+    "$SCRIPT_PATH" &
+    check_success
+  else
+    echo -e "${RED}Error:${NC} unsuccessful-attempts.sh script not found or executable."
+  fi
 }
+
 
 # Main function
 main() {
