@@ -39,16 +39,6 @@ check_success() {
     fi
 }
 
-# Function to check if a user exists
-user_exists() {
-    if id "$1" >/dev/null 2>&1; then
-      echo -e "${YELLOW}Warning${NC}: User $1 already exists."
-      return 0  # User exists
-    else
-      return 1  # User does not exist
-    fi
-}
-
 # Function to create user accounts
 create_user_accounts() {
     echo -e " ${LIGHTBLUE}
