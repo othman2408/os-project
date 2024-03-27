@@ -207,7 +207,9 @@ configure_sshd_sftp() {
     fi
 
     # Add users to the sftp_users group
-    sudo usermod -aG sftp_users "${USERS[@]}"
+    for USER in "${USERS[@]}"; do
+        sudo usermod -aG sftp_users "$USER"
+    done
 
     # Check if the SSH configuration block for sftp_users already exists in sshd_config
     if ! grep -q "Match Group sftp_users" /etc/ssh/sshd_config; then
@@ -229,7 +231,9 @@ configure_sshd_sftp() {
     fi
 
     # Add users to the ssh_users group
-    sudo usermod -aG ssh_users "${USERS[@]}"
+    for USER in "${USERS[@]}"; do
+        sudo usermod -aG ssh_users "$USER"
+    done
 
     # Check if the SSH configuration block for ssh_users already exists in sshd_config
     if ! grep -q "Match Group ssh_users" /etc/ssh/sshd_config; then
@@ -246,9 +250,6 @@ configure_sshd_sftp() {
 
     # Restart SSHD
     restart_sshd
-
-    # Check overall success
-    check_success
 }
 
 
