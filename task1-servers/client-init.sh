@@ -68,9 +68,9 @@ check_ssh_enabled() {
 # Function to check if SSH server is running
 check_ssh_status() {
     echo -e " ${LIGHTBLUE}
- ----------------------
-| SSH server status... |
- ---------------------- ${NC}"
+ -------------------
+| SSH server status |
+ ------------------- ${NC}"
     if systemctl is-active --quiet sshd &>>"$LOGFILE"; then
         echo -e "${GREEN}SSH server is running${NC}"
         echo -e "$(date) - User: $(whoami) - SSH server is running" >> "$LOGFILE"
