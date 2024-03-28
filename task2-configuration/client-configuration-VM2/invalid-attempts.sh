@@ -18,7 +18,7 @@ do
     echo
 
     echo "Attempt $attempt: Trying to access the server..."
-
+    
     # Try to access the server
     sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 "$USERNAME"@"$SERVER_ADDRESS"
 
@@ -29,7 +29,7 @@ do
         exit 0
     else
         echo "Access denied. Please enter the correct credentials."
-        echo "$(date): Attempt $attempt failed for user $USERNAME trying to access $SERVER_ADDRESS" >> ssh_attempts.log
+        echo "$(date): Attempt $attempt failed for user $USERNAME trying to access $SERVER_ADDRESS" >> ~/ssh_attempts.log
     fi
 
     # Increment the attempt counter
@@ -37,9 +37,9 @@ do
 done
 
 echo "Maximum number of attempts reached. Please try again later."
-echo "WRONG"
+echo "Unauthorized user!"
 read -p "Enter server name: " SERVER_NAME
 echo "Copying ssh_attempts.log using rsync to the server..."
-rsync ssh_attempts.log "$SERVER_NAME@$SERVER_ADDRESS:$RSYNC_DESTINATION"
-sleep 60s && gnome-session-quit --no-prompt
+rsync ~/ssh_attempts.log "$SERVER_NAME@$SERVER_ADDRESS:$RSYNC_DESTINATION"
+sleep 60s && gnome-session-quit --no-prompt &
 exit 1

@@ -7,8 +7,9 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# # Creates admins group
+# Creates admins group
 createGroup() {
+    # Create admins group
     if ! getent group "admins" > "/dev/null" 
     then    
         sudo groupadd "admins"
@@ -19,6 +20,7 @@ createGroup() {
 
 # Adds the admins group to sudoers file
 addGroupToSudoers() {
+    # Create admins group
     if ! grep "^%admins" "/etc/sudoers" > "/dev/null" 2>&1 
     then
         echo -e "Adding ${LIGHTBLUE}admins${NC} to sudoers file..."
@@ -52,7 +54,7 @@ main() {
         # User does not exist
         if ! id "$user" > "/dev/null" 2>&1
         then
-            sudo useradd "$user" 
+            sudo useradd -m "$user" 
             sudo passwd "$user" 
             echo -e "User ${LIGHTBLUE}"$user"${NC} created ${GREEN}successfully${NC} on ${LIGHTBLUE}$(date +%Y-%m-%d--%I-%M-%S)${NC}"
             break
@@ -66,7 +68,7 @@ main() {
     echo -e "Executing ${LIGHTBLUE}./main.sh${NC}"
     # Give execute permission to main.sh
     chmod +x main.sh
-    sudo -u $user ./main.sh $user
+    sudo -u $user ./main.sh
     sleep 1
     createGroup
     addGroupToSudoers
