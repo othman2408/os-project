@@ -11,9 +11,6 @@ monitor_ssh_logs() {
     # Keep read from SSH log and filter for unsuccessful attempts and redirected to the log file
     tail -n0 -F "$SSH_LOG" | grep --line-buffered 'authentication failure' > "$ERROR_LOG" &
 
-    # PID of the background process
-    PID=$!
-
     # keep running
     while true; do
         # delete the error log if it's more than one week
@@ -22,9 +19,6 @@ monitor_ssh_logs() {
         # Sleep for 1 day before run again
         sleep 86400
     done
-
-    # Kill the background process when the script exits
-    trap "kill $PID" EXIT
 }
 
 # Main function

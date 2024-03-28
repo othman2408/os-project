@@ -252,8 +252,6 @@ configure_sshd_sftp() {
     restart_sshd
 }
 
-
-
 # Function to restart SSHD
 restart_sshd() {
     echo -n "Restarting SSHD... "
