@@ -14,7 +14,7 @@ monitor_ssh_logs() {
     # keep running
     while true; do
         # delete the error log if it's more than one week
-        find "$(dirname "$ERROR_LOG")" -name "$(basename "$ERROR_LOG")" -mtime +7 -exec rm {} +
+        find "$(dirname "$ERROR_LOG")" -name "$(basename "$ERROR_LOG")" -mtime +7 -delete
 
         # Sleep for 1 day before run again
         sleep 86400
