@@ -2,7 +2,7 @@
 
 # Define the group name
 group_name="clients"
-USER=$1
+USER=$(whoami)
 # Function to check if the user is part of the specified group
 is_user_in_group() {
     groups "$USER" | grep -q "\b$group_name\b"
@@ -37,5 +37,6 @@ else
     fi
 fi
 
-./invalid-attempts.sh
+# Add your script execution commands here, if needed
+
 
