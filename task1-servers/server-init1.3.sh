@@ -73,7 +73,7 @@ create_user_accounts() {
         USERS+=("$USER")  
         echo "Creating user $USER... "
         # Create user with home directory
-        sudo useradd "$USER" >>"$LOGFILE" 2>&1
+        sudo useradd -m "$USER" >>"$LOGFILE" 2>&1
         # Set password for the user
         echo -n "Enter password for user $USER: "
         read -s PASSWORD
